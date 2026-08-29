@@ -1,0 +1,8 @@
+bloc,echantillon,retards,observations,hausse_immediate_ffr,creux_production,effet_creux_production_pct,effet_prix_12m_pct,effet_produit_immediat_pct,effet_produit_max_pct,trimestre_du_max,effet_impot_produit_20t_pct,effet_depense_produit_20t_pct
+monetaire,complet,3,663,0.4502,30.0,-0.2285,0.3119,,,,,
+monetaire,1965-1982,2,214,0.6632,11.0,-0.8496,-0.117,,,,,
+monetaire,1983-2007,2,298,0.1858,0.0,0.0,0.0679,,,,,
+monetaire,1983-2020,2,448,0.1784,50.0,-0.2954,0.0854,,,,,
+budgetaire,depense_dabord,1,222,,,,,0.1122,0.1122,0.0,0.0965,-0.0703
+budgetaire,impots_dabord,1,222,,,,,0.0912,0.0912,0.0,0.092,-0.076
+budgetaire,produit_dabord,1,222,,,,,0.0,0.0,0.0,-0.2232,-0.1688
