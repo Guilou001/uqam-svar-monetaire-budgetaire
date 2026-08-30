@@ -8,6 +8,8 @@ viennent de FRED par script, et chaque figure se régénère d'une commande.
 ![python](https://img.shields.io/badge/python-3.12-blue)
 ![licence](https://img.shields.io/badge/code-MIT-green)
 
+Le même contenu en PDF : [rapport/rapport.pdf](rapport/rapport.pdf).
+
 **Résultat en une phrase.** Le schéma de Christiano, Eichenbaum et Evans se retrouve trait pour trait
 sur 1965-2020 : la production monte pendant cinq mois avant de tomber, jusqu'à **-0,23 %** au mois 30,
 et les prix montent au lieu de baisser, l'énigme que le travail de 2021 signalait déjà. La coupure
