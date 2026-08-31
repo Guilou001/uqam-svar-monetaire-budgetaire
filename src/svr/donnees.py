@@ -129,11 +129,13 @@ def charger(racine: Path = RACINE) -> Donnees:
     brut = {nom: _lire(identifiant, racine).loc[DEBUT_TRIMESTRIEL:FIN_TRIMESTRIEL]
             for identifiant, nom in TRIMESTRIELLES.items()}
     table = pd.DataFrame(brut)
-    depense_nette = table["recettes"] - table["transferts"] - table["interets"] - table["subventions"]
+    recettes_nettes = table["recettes"] - table["transferts"] - table["interets"] - table["subventions"]
     par_tete = 1e9 * 100.0 / (table["population"] * 1000.0)
+    # Le produit reste en dollars courants : le code de 2021 divisait G et T par le déflateur et
+    # laissait Y sans, et ce dépôt le reproduit tel quel. Le défaut est déclaré dans le README.
     trimestriel = pd.DataFrame({
         "G": np.log(table["depense"] / table["deflateur"] * par_tete),
-        "T": np.log(depense_nette / table["deflateur"] * par_tete),
+        "T": np.log(recettes_nettes / table["deflateur"] * par_tete),
         "Y": np.log(table["pib"] * 1e9 / (table["population"] * 1000.0)),
     }).dropna()
 

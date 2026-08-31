@@ -7,6 +7,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.ticker import MaxNLocator
 
 OKABE_ITO = ["#0072B2", "#E69F00", "#009E73", "#D55E00", "#CC79A7", "#56B4E9", "#F0E442", "#000000"]
 
@@ -81,8 +82,10 @@ def fig_budgetaire(reponses: dict[str, pd.DataFrame], dest: Path) -> Path:
         ax.plot(np.arange(len(serie)), serie, color=OKABE_ITO[k % len(OKABE_ITO)],
                 marker="o", ms=3, label=nom.replace("_", " "))
     ax.axhline(0.0, color="black", lw=0.8)
+    # les trimestres se comptent un par un : l'axe ne doit pas afficher de demi-trimestre
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
     ax.set_xlabel("Trimestres écoulés depuis le choc")
-    ax.set_ylabel("Réponse du produit intérieur brut réel\npar habitant (%)", fontsize=9.5)
+    ax.set_ylabel("Réponse du produit intérieur brut nominal\npar habitant (%)", fontsize=9.5)
     ax.yaxis.set_major_formatter(fr)
     ax.legend(fontsize=9)
     ecarts = {nom: 100 * float(t["Y"].max()) for nom, t in reponses.items()}
@@ -116,6 +119,23 @@ def fig_variance(decomposition: pd.DataFrame, titre: str, dest: Path) -> Path:
     return dest
 
 
+def titre_monetaire(nom: str, table: pd.DataFrame) -> str:
+    """Le titre d'une figure de réponses, déduit de la table que cette figure dessine.
+
+    Le creux ne s'annonce que s'il existe. Sur 1983-2007 la production ne repasse jamais sous son
+    niveau de départ, et le minimum de la colonne y vaut exactement zéro, au mois zéro : écrire
+    « creux à 0,00 % au mois 0 » dirait alors le contraire de ce que la courbe montre.
+    """
+    bas = 100 * float(table["LIP"].min())
+    if bas >= 0:
+        fin = "la production ne descend jamais sous son niveau de départ"
+    else:
+        fin = f"la production touche son creux à {_fr(bas)} % au mois {int(table['LIP'].idxmin())}"
+    return (f"Choc de politique monétaire, échantillon {nom.replace('complet', '1965-2020')} : "
+            f"{fin}\n"
+            "La bande est l'intervalle à 90 % par tirages de Monte-Carlo")
+
+
 def toutes(out: Path = Path("results")) -> list[Path]:
     """Toutes les figures que les tables présentes permettent de dessiner."""
     from svr.donnees import SOUS_ECHANTILLONS
@@ -131,11 +151,7 @@ def toutes(out: Path = Path("results")) -> list[Path]:
         table = pd.read_csv(chemin, index_col=0)
         basse = pd.read_csv(tables / f"reponses_monetaire_{nom}_basse.csv")
         haute = pd.read_csv(tables / f"reponses_monetaire_{nom}_haute.csv")
-        creux = int(table["LIP"].idxmin())
-        titre = (f"Choc de politique monétaire, échantillon {nom.replace('complet', '1965-2020')} : "
-                 f"la production touche son creux à {_fr(100 * table['LIP'].min())} % au mois {creux}\n"
-                 "La bande est l'intervalle à 90 % par rééchantillonnage")
-        ecrites.append(fig_reponses(table, basse, haute, titre,
+        ecrites.append(fig_reponses(table, basse, haute, titre_monetaire(nom, table),
                                     figs / f"reponses_monetaire_{nom}.png"))
 
     chemin = tables / "variance_monetaire_complet_h10.csv"

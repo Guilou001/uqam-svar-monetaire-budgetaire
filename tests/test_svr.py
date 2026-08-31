@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 
 from svr.donnees import ORDRE_MENSUEL, SOUS_ECHANTILLONS, imputer
+from svr.figures import titre_monetaire
 from svr.svar import decomposition, estimer, reponses, table_reponses
 
 
@@ -92,3 +93,20 @@ def test_l_ordre_des_variables_monetaires_est_celui_de_cee():
     """Quatre variables lentes, le taux directeur, puis trois variables financières."""
     assert ORDRE_MENSUEL == ["LIP", "UNEMP", "LPCOM", "LCPI", "FFR", "LM1", "LNBR", "LTR"]
     assert ORDRE_MENSUEL.index("FFR") == 4
+
+
+def test_le_titre_n_annonce_un_creux_que_s_il_existe():
+    """Le titre d'une figure se déduit de la table qu'elle dessine, et il doit dire vrai.
+
+    Une réponse qui ne repasse jamais sous son niveau de départ a pour minimum zéro, au mois zéro.
+    Annoncer « creux à 0,00 % au mois 0 » serait alors le contraire de ce que la courbe montre, et
+    c'est le titre que portait la figure de 1983-2007.
+    """
+    montante = pd.DataFrame({"LIP": [0.0, 0.00075, 0.00116]})
+    assert "ne descend jamais sous son niveau de départ" in titre_monetaire("1983-2007", montante)
+    assert "creux" not in titre_monetaire("1983-2007", montante)
+
+    creusee = pd.DataFrame({"LIP": [0.0, -0.0085, -0.002]})
+    # -0,0085 en logarithme fait -0,85 %, atteint au mois 1
+    assert "creux à -0,85 % au mois 1" in titre_monetaire("complet", creusee)
+    assert "échantillon 1965-2020" in titre_monetaire("complet", creusee)

@@ -32,18 +32,18 @@
   #block(width: 100%)[
     #text(size: 18pt, weight: "bold")[Un choc de taux, un choc de dépense : ce que deux SVAR disent, et ce qu'ils disent de moins depuis 1983]
     #v(0.6em)
-    #text(size: 10pt, fill: luma(70))[Guillaume Vaudescal · 2026-08-30 · #link("https://github.com/Guilou001/uqam-svar-monetaire-budgetaire")[Guilou001/uqam-svar-monetaire-budgetaire]]
+    #text(size: 10pt, fill: luma(70))[Guillaume Vaudescal · 2026-08-31 · #link("https://github.com/Guilou001/uqam-svar-monetaire-budgetaire")[Guilou001/uqam-svar-monetaire-budgetaire]]
   ]
 ]
 #v(1.2em)
 #line(length: 100%, stroke: 0.6pt + luma(190))
 #v(0.8em)
 
-Travail pratique remis le 16 décembre 2021 à Alain Guay, dans le cours _Applications de modèles économiques_ (ECO8086, UQAM), porté de R vers Python et rendu reproductible : les seize séries viennent de FRED par script, et chaque figure se régénère d'une commande.
+Travail pratique remis le 16 décembre 2021 à Alain Guay, dans le cours _Applications de modèles économiques_ (ECO8086, UQAM). Le portage de R vers Python le rend reproductible : les seize séries viennent de FRED par script, et chaque figure se régénère d'une commande.
 
-Le même contenu en PDF : #link("rapport/rapport.pdf")[rapport/rapport.pdf].
+Le même contenu en PDF : #link("https://github.com/Guilou001/uqam-svar-monetaire-budgetaire/blob/main/rapport/rapport.pdf")[rapport/rapport.pdf].
 
-*Résultat en une phrase.* Le schéma de Christiano, Eichenbaum et Evans se retrouve trait pour trait sur 1965-2020 : la production monte pendant cinq mois avant de tomber, jusqu'à *-0,23 %* au mois 30, et les prix montent au lieu de baisser, l'énigme que le travail de 2021 signalait déjà. La coupure d'échantillon dit le reste : avant 1983 un choc de taux creuse la production de *-0,85 %* en onze mois, entre 1983 et 2007 il ne la fait *jamais passer sous son niveau de départ*. Côté budgétaire, l'ordre de récursivité décide du signe : la dépense publique élève le produit de *+0,11 %* quand elle est ordonnée en premier et de *0,00 %* par construction quand le produit l'est.
+*Résultat en une phrase.* Le schéma de Christiano, Eichenbaum et Evans se retrouve trait pour trait sur 1965-2020 : la production monte pendant cinq mois avant de tomber, jusqu'à *-0,23 %* au mois 30. Les prix, eux, montent au lieu de baisser, l'énigme que le travail de 2021 signalait déjà. La coupure d'échantillon dit le reste : avant 1983 un choc de taux creuse la production de *-0,85 %* en onze mois, entre 1983 et 2007 il ne la fait *jamais passer sous son niveau de départ*. Côté budgétaire, l'ordre de récursivité décide du signe : la dépense publique élève le produit de *+0,11 %* quand elle est ordonnée en premier et de *0,00 %* par construction quand le produit l'est.
 
 _English summary._ A recursive SVAR on eight US monthly series, 1965-2020, reproduces the Christiano, Eichenbaum and Evans (1999) pattern: industrial production rises for five months, then falls to -0,23 % at month 30, while consumer prices rise, the price puzzle the 2021 coursework already flagged. Splitting the sample sharpens the point: before 1983 a policy shock cuts production by 0,85 % within eleven months; from 1983 to 2007 production never drops below its starting level. In the fiscal block, the recursive ordering decides the sign of the impact response, from +0,11 % to exactly zero. Two substitutions are declared: the Wu-Xia shadow rate is not downloadable by script, and Guay's fiscal database is not public, so government spending is rebuilt from the FRED aggregate that equals the sum of its seven components.
 
@@ -71,13 +71,15 @@ L'hypothèse en question s'appelle l'*identification récursive*. On range les v
 
 === Pourquoi les sous-échantillons diffèrent
 
-#quote(block: true)[Cela dit,on peut conclure que les décompositions de la variance pour chaque échantillon sont statistiquement différentes. En effet, si nous comparons seulement le LIP entre ces trois échantillons, à l'exception de l'horizon un, les résultats sont très différents, et les variables qui expliquent la variation du LIP changent également. Ily a un grand nombre de raisons qui pourraient expliquer ces différences. D'une part, le changement de régime de la FED pourrait en être une. En ce sens, un changement d'objectif et de comportement de l'institution monétaire pourrait modifier la relation entre les variables.]
+#quote(block: true)[Cela dit,on peut conclure que les décompositions de la variance pour chaque échantillon sont statistiquement différentes. En effet, si nous comparons seulement le LIP entre ces trois échantillons, à l'exception de l'horizon un, les résultats sont très différents, et les variables qui expliquent la variation du LIP changent également. Ily a un grand nombre de raisons qui pourraient expliquer ces différences. D'une part, le changement de régime de la FED pourrait en être une. En ce sens, un changement d'objectif et de comportement de l'institution monétaire pourrait modifier la relation entre les variables. D'autre part, différents changements économiques structurels au fil du temps pourraient également être en cause. Finalement, ces périodes contiennent des cycles économiques bien distincts. Par exemple, le dernier échantillon ajoute deux récessions majeures à l'échantillon 1983-2007. Tous ces facteurs créent des échantillons inhéremment différents, et par le fait même, des décompositions de variance différentes.]
 
 === Le bloc budgétaire, et le jugement porté sur les trois ordres
 
 #quote(block: true)[En considérant un choc structurel budgétaire (G), les fonctions de réponses pour T et G sont cohérentes. Si on se concentre sur l'effet sur l'output, on voit que les dépenses gouvernementales augmentent ce dernier, mais la hausse n'est qu'éphémère. Cela fait du sens, car bien que les dépenses gouvernementales augmentent l'output, elles ne sont pas source de croissances à long terme.
 
 (G, T, Y) : Ce schéma est plausible, Y reçoit l'effet contemporain de chocs fiscaux et budgétaires ce qui est cohérent. La relation contemporaine entre T et G est plus nébuleuse. Il semble plus logique que les dépenses gouvernementales soient affectées par un choc fiscal que l'alternative.
+
+(T, G, Y) : Blanchard utilise cette stratégie d'identification. Elle semble plausible pour les mêmes raisons que (GTY), par contre, cette stratégie tient en compte l'effet contemporain de la politique fiscale sur les dépenses gouvernementales. Pour ces raisons, elle semble être la plus plausible des trois.
 
 (Y, G, T) : Il semble peu plausible que G et T n'aient pas d'effet contemporain sur Y. Les dépenses gouvernementales entrent directement dans l'output et les agents économiques réagissent rapidement à un choc fiscal et leur comportement aurait fort probablement un effet contemporain sur l'output.]
 
@@ -99,12 +101,12 @@ Le code R de 2021 lisait deux classeurs déposés à la main, et aucun des deux 
     [1965-01 à 2020-06],
     [666],
     [Trimestriel],
-    [dépense publique, recettes nettes, produit intérieur brut, tous réels et par habitant],
+    [dépense publique et recettes nettes, réelles et par habitant ; produit intérieur brut nominal par habitant],
     [1960T1 à 2015T3],
     [223],
 )
 
-Comment lire ce tableau, en deux constats. Le premier est que les deux fenêtres tombent exactement sur celles du code de 2021, qui les écrivait en positions de ligne, #raw("X[1:666]") et #raw("dt.Q[53:275,]"). Le second est que les huit variables mensuelles sont celles de Christiano, Eichenbaum et Evans, rangées dans leur ordre de récursivité : les quatre lentes d'abord, le taux directeur au milieu, les trois variables financières ensuite.
+Comment lire ce tableau, en deux constats. Le premier est que les deux fenêtres tombent exactement sur celles du code de 2021, qui les écrivait en positions de ligne, #raw("X[217:666,]") et #raw("dt.Q[53:275,]"). Le second est que les huit variables mensuelles sont celles de Christiano, Eichenbaum et Evans, rangées dans leur ordre de récursivité : les quatre lentes d'abord, le taux directeur au milieu, les trois variables financières ensuite.
 
 *La dépense publique de Guay, remplacée par une somme identique.* Le code de 2021 formait la dépense en additionnant sept postes, #raw("wage + durable + nondurable + service + structure + equip + intel"). Cette somme est, poste pour poste, la consommation publique augmentée de l'investissement public, que FRED publie déjà agrégée sous #raw("GCE"). La substitution est une agrégation équivalente, pas une approximation. Les recettes nettes suivent la même définition qu'en 2021, les recettes courantes moins les transferts, les intérêts versés et les subventions.
 
@@ -117,7 +119,7 @@ Comment lire ce tableau, en deux constats. Le premier est que les deux fenêtres
 + *Ranger les huit variables* dans l'ordre de récursivité de Christiano, Eichenbaum et Evans.
 + *Estimer un VAR à constante*, trois retards sur l'échantillon complet et deux sur chaque sous-échantillon, comme en 2021.
 + *Identifier les chocs par décomposition de Cholesky* de la covariance des résidus. Le code R passait par une matrice #raw("Amat") triangulaire inférieure entièrement libre ; une telle matrice est l'inverse du facteur de Cholesky, et un test du dépôt vérifie cette identité à 1e-12.
-+ *Tracer les réponses sur cinquante mois*, avec un intervalle à 90 % obtenu par 200 rééchantillonnages.
++ *Tracer les réponses sur cinquante mois*, avec un intervalle à 90 % obtenu par 200 tirages de Monte-Carlo.
 + *Décomposer la variance de prévision* à dix et à douze mois.
 + *Recommencer sur les trois sous-échantillons*, 1965-1982, 1983-2007 et 1983-2020.
 + *Refaire l'exercice sur le bloc budgétaire*, un VAR à un retard sur trois variables, dans les trois ordres que l'énoncé impose.
@@ -168,11 +170,25 @@ Comment lire ce tableau, en deux constats. Le premier est que les deux fenêtres
     [+0,09 %],
 )
 
-Comment lire ce tableau, en quatre constats. D'abord, le choc lui-même rétrécit : un écart type du choc de taux vaut 0,66 point avant 1983 et 0,18 point après, ce qui dit d'abord que la politique monétaire est devenue moins brutale. Ensuite, l'effet sur la production suit le même chemin, de -0,85 % en onze mois à un creux qui n'existe plus du tout entre 1983 et 2007 : sur ce sous-échantillon la réponse de la production ne descend jamais sous zéro en cinquante mois. Puis, l'énigme des prix, la hausse du niveau des prix après un resserrement, est présente partout sauf sur 1965-1982, la période où l'inflation était forte et la politique monétaire réactive. Enfin, le creux de -0,30 % sur 1983-2020 tombe au cinquantième mois, c'est-à-dire au bord de la fenêtre tracée : ce n'est pas un creux, c'est le point le plus bas atteint avant l'arrêt du calcul.
+Comment lire ce tableau, en quatre constats. D'abord, le choc lui-même rétrécit : un écart type du choc de taux vaut 0,66 point avant 1983 et 0,18 point après, ce qui dit d'abord que la politique monétaire est devenue moins brutale. Ensuite, l'effet sur la production suit le même chemin, de -0,85 % en onze mois à un creux qui n'existe plus du tout entre 1983 et 2007. Sur ce sous-échantillon, la réponse de la production ne descend jamais sous zéro en cinquante mois. Puis, l'énigme des prix, la hausse du niveau des prix après un resserrement, est présente partout sauf sur 1965-1982, la période où l'inflation était forte et la politique monétaire réactive. Enfin, le creux de -0,30 % sur 1983-2020 tombe au cinquantième mois, c'est-à-dire au bord de la fenêtre tracée : ce n'est pas un creux, c'est le point le plus bas atteint avant l'arrêt du calcul.
+
+Les trois sous-échantillons ont chacun leur planche de réponses, et ce sont elles qui portent le verdict du tableau.
+
+#figure(image("../results/figures/reponses_monetaire_1965-1982.png", width: 100%), caption: [Réponses au choc monétaire, 1965-1982])
+
+Comment lire cette figure : mêmes cadres et mêmes conventions que la planche d'ensemble ci-dessous. Le cadre de la production, en haut à gauche, descend jusqu'à -0,85 % au onzième mois, et sa bande reste sous zéro d'un bout à l'autre du creux. Le cadre des prix à la consommation descend lui aussi, seul des trois échantillons à le faire : l'énigme des prix est absente ici.
+
+#figure(image("../results/figures/reponses_monetaire_1983-2007.png", width: 100%), caption: [Réponses au choc monétaire, 1983-2007])
+
+Comment lire cette figure : le même choc, sur les vingt-cinq années suivantes. La production ne passe jamais sous son niveau de départ en cinquante mois, ce qui est le fait central du dépôt. Les prix à la consommation, eux, montent, donc l'énigme des prix apparaît là où l'effet réel disparaît.
+
+#figure(image("../results/figures/reponses_monetaire_1983-2020.png", width: 100%), caption: [Réponses au choc monétaire, 1983-2020])
+
+Comment lire cette figure : la même période prolongée jusqu'en 2020. La production finit par passer sous zéro, à -0,30 %, mais au cinquantième mois, c'est-à-dire au bord du calcul. Ce point le plus bas n'est donc pas un creux, et le comparer aux onze mois de 1965-1982 n'aurait pas de sens.
 
 #figure(image("../results/figures/reponses_monetaire_complet.png", width: 100%), caption: [Réponses au choc monétaire, 1965-2020])
 
-Comment lire cette figure : un cadre par variable, les mois écoulés depuis le choc en abscisse. La courbe est la réponse à un choc de taux d'un écart type, la bande son intervalle à 90 %. Les grandeurs en logarithme sont converties en pourcentage, les taux restent en points. La production monte d'abord, puis descend, et sa bande englobe zéro dès le vingtième mois : l'effet est net dans sa forme et incertain dans son ampleur. Les prix à la consommation, en haut à droite, montent sans jamais redescendre, ce qu'aucune théorie du resserrement monétaire ne prévoit.
+Comment lire cette figure : un cadre par variable, les mois écoulés depuis le choc en abscisse. La courbe est la réponse à un choc de taux d'un écart type, la bande son intervalle à 90 %. Les grandeurs en logarithme sont converties en pourcentage, les taux restent en points. La production monte d'abord, puis descend, et sa bande cesse d'exclure zéro au trentième mois : l'effet est net dans sa forme et incertain dans son ampleur. Les prix à la consommation, en haut à droite, montent sans jamais redescendre, ce qu'aucune théorie du resserrement monétaire ne prévoit.
 
 #figure(image("../results/figures/variance_monetaire.png", width: 100%), caption: [Décomposition de la variance])
 
@@ -238,17 +254,17 @@ Comment lire ce tableau, en trois constats. Le premier est que les constats qual
     [-0,22 %],
 )
 
-Comment lire ce tableau, en trois constats. Le premier est mécanique et sert de preuve que le code fait ce qu'il annonce : dans le troisième ordre, le produit vient en premier, donc il ne peut pas réagir dans le trimestre à un choc de dépense, et la case vaut exactement zéro. Le deuxième est que les deux premiers ordres donnent presque le même chiffre, +0,11 % et +0,09 %, ce qui rassure sur la partie du résultat qui ne dépend pas de l'hypothèse. Le troisième est que l'effet de long terme est négatif dans les trois cas, ce que le travail de 2021 jugeait déjà peu conforme à Blanchard et Perotti, et le classement de plausibilité qu'il proposait reste le bon guide de lecture.
+Comment lire ce tableau, en trois constats. Le premier est mécanique, et il sert de preuve que le code fait ce qu'il annonce. Dans le troisième ordre, le produit vient en premier, donc il ne peut pas réagir dans le trimestre à un choc de dépense, et la case vaut exactement zéro. Le deuxième est que les deux premiers ordres donnent presque le même chiffre, +0,11 % et +0,09 %, ce qui rassure sur la partie du résultat qui ne dépend pas de l'hypothèse. Le troisième est que l'effet de long terme est négatif dans les trois cas, ce que le travail de 2021 jugeait déjà peu conforme à Blanchard et Perotti. Le classement de plausibilité qu'il proposait reste le bon guide de lecture.
 
 #figure(image("../results/figures/reponses_budgetaire.png", width: 100%), caption: [Réponse du produit à un choc de dépense])
 
-Comment lire cette figure : les trois courbes sont la réponse du produit intérieur brut réel par habitant à un choc de dépense publique d'un écart type, une courbe par ordre de récursivité. La courbe qui part de zéro est celle où le produit est ordonné en premier, par construction. Les trois se rejoignent après quelques trimestres, ce qui délimite ce que l'hypothèse d'identification décide vraiment : le trimestre du choc, et lui seul.
+Comment lire cette figure : les trois courbes sont la réponse du produit intérieur brut nominal par habitant à un choc de dépense publique d'un écart type, une courbe par ordre de récursivité. La courbe qui part de zéro est celle où le produit est ordonné en premier, par construction. Les trois ne se rejoignent pas sur les vingt trimestres tracés : l'écart entre la plus haute et la plus basse vaut 0,112 point à l'impact et encore 0,099 point au vingtième. L'ordre choisi ne décide donc pas du seul trimestre du choc, il décale toute la trajectoire.
 
 == 6. Reproduire
 
-#raw("uv sync --locked --all-extras\nuv run pytest             # 9 tests fermés, sans réseau\nuv run svr fetch          # seize séries de FRED, environ 0,2 Mo\nuv run svr bases          # les deux fenêtres, et les cases comblées\nuv run svr retards        # les critères d'information, comme VARselect\nuv run svr lab            # les quatre SVAR monétaires et les trois budgétaires\nuv run svr figures        # les six figures", block: true, lang: "bash")
+#raw("uv sync --locked --all-extras\nuv run pytest             # 11 tests fermés, sans réseau\nuv run svr fetch          # seize séries de FRED, environ 0,2 Mo\nuv run svr bases          # les deux fenêtres, et les cases comblées\nuv run svr retards        # les critères d'information, comme VARselect\nuv run svr lab            # les quatre SVAR monétaires et les trois budgétaires\nuv run svr figures        # les six figures", block: true, lang: "bash")
 
-Durée mesurée sur un processeur Apple M5 Pro : *16 secondes* pour #raw("svr lab"), l'essentiel passant dans les 200 rééchantillonnages qui donnent les intervalles.
+Durée mesurée sur un processeur Apple M5 Pro : *16 secondes* pour #raw("svr lab"), dont le plus gros passe dans les 200 tirages de Monte-Carlo qui donnent les intervalles.
 
 == 7. Limites, avec leur statut
 
@@ -271,10 +287,12 @@ Durée mesurée sur un processeur Apple M5 Pro : *16 secondes* pour #raw("svr la
     [déclaré ; le travail de 2021 portait la même rupture],
     [L'identification récursive est une hypothèse, pas un résultat],
     [reconnu ; c'est le sujet même du bloc budgétaire, où trois ordres donnent trois réponses immédiates différentes],
-    [Les intervalles viennent de 200 rééchantillonnages],
-    [déclaré ; leur graine est fixée à 20211216, la date de remise du travail],
+    [Les intervalles viennent de 200 tirages de Monte-Carlo, sous hypothèse de résidus normaux],
+    [déclaré ; leur graine est fixée à 20211216, la date de remise du travail, et le code de 2021 employait un rééchantillonnage des résidus, non un tirage normal],
     [Aucun test de racine unitaire ni de cointégration],
     [reconnu ; le travail de 2021 estimait aussi en niveaux, comme Blanchard et Perotti],
+    [Le produit intérieur brut du bloc trimestriel est nominal, la dépense et les recettes sont réelles],
+    [mesuré ; le code de 2021 divisait la dépense et les recettes par le déflateur et laissait le produit en dollars courants, et ce dépôt le reproduit tel quel plutôt que de corriger en silence],
 )
 
 == 8. Crédits, licence, citation

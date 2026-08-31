@@ -61,8 +61,13 @@ def reponses(modele: Structurel, periodes: int = 50) -> np.ndarray:
 
 def bandes(modele: Structurel, periodes: int = 50, repetitions: int = 200,
            couverture: float = 0.90, graine: int = 20211216) -> tuple[np.ndarray, np.ndarray]:
-    """Un intervalle de confiance par rééchantillonnage, comme `irf(..., ci = 0.90)` en R."""
-    np.random.seed(graine)
+    """Un intervalle de confiance par tirages de Monte-Carlo sous résidus normaux.
+
+    La méthode simule de nouvelles trajectoires à partir des coefficients estimés et d'innovations
+    gaussiennes, puis réestime ; elle ne retire jamais un résidu observé. Le code de 2021 appelait
+    `irf(..., ci = 0.90)`, dont le défaut `boot = TRUE` rééchantillonnait les résidus : la
+    correspondance porte sur la couverture demandée, pas sur la façon de la calculer.
+    """
     basse, haute = modele.ajuste.irf(periodes).errband_mc(
         orth=True, repl=repetitions, signif=1 - couverture, seed=graine)
     return basse, haute
