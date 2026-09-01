@@ -6,6 +6,10 @@ le PDF de 2021 vient d'un traitement de texte à justification, dont l'extractio
 deux (« l a première », « entr e ») ; ces coupures sont un artefact de mise en page, pas des mots.
 L'apostrophe typographique est ramenée à l'apostrophe droite pour la même raison. La suite de lettres,
 elle, doit être identique.
+
+Une ligne « […] » signale que du texte du travail a été sauté à cet endroit. Elle n'est pas citée, elle
+marque une coupure : le test la traite donc comme une fin de bloc, et les deux passages qu'elle sépare
+sont cherchés dans le PDF chacun de son côté.
 """
 
 import re
@@ -20,6 +24,9 @@ PDF = RACINE / "rapport" / "rapport_original_2021.pdf"
 # l'apostrophe typographique du traitement de texte et l'apostrophe droite désignent le même mot
 APOSTROPHES = {"\u2019": "'", "\u2018": "'", "\u201c": '"', "\u201d": '"'}
 
+# la marque d'une coupure dans une citation : du texte du travail a été sauté à cet endroit
+COUPURE = "[\u2026]"
+
 
 def _sans_espaces(texte: str) -> str:
     for avant, apres in APOSTROPHES.items():
@@ -32,7 +39,7 @@ def _blocs_cites(readme: str) -> list[str]:
     for ligne in readme.splitlines():
         if ligne.startswith(">"):
             contenu = ligne[1:].strip()
-            if contenu:
+            if contenu and contenu != COUPURE:
                 courant.append(contenu)
                 continue
         if courant:

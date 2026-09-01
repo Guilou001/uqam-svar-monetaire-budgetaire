@@ -50,6 +50,8 @@ cet ordre. La production ne voit pas le taux du mois même, mais les réserves b
 
 > Considérez les mêmes variables que CEE (1999, voir le texte de V. Ramey) avec le même schéma
 > d'identification.
+>
+> […]
 
 ### Les données du travail
 
@@ -88,6 +90,8 @@ cet ordre. La production ne voit pas le taux du mois même, mais les réserves b
 > cohérentes. Si on se concentre sur l'effet sur l'output, on voit que les dépenses gouvernementales
 > augmentent ce dernier, mais la hausse n'est qu'éphémère. Cela fait du sens, car bien que les dépenses
 > gouvernementales augmentent l'output, elles ne sont pas source de croissances à long terme.
+>
+> […]
 >
 > (G, T, Y) : Ce schéma est plausible, Y reçoit l'effet contemporain de chocs fiscaux et budgétaires ce
 > qui est cohérent. La relation contemporaine entre T et G est plus nébuleuse. Il semble plus logique

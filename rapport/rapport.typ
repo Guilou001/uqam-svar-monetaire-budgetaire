@@ -59,7 +59,9 @@ L'hypothèse en question s'appelle l'*identification récursive*. On range les v
 
 === Ce que l'énoncé demandait
 
-#quote(block: true)[Considérez les mêmes variables que CEE (1999, voir le texte de V. Ramey) avec le même schéma d'identification.]
+#quote(block: true)[Considérez les mêmes variables que CEE (1999, voir le texte de V. Ramey) avec le même schéma d'identification.
+
+\[…\]]
 
 === Les données du travail
 
@@ -76,6 +78,8 @@ L'hypothèse en question s'appelle l'*identification récursive*. On range les v
 === Le bloc budgétaire, et le jugement porté sur les trois ordres
 
 #quote(block: true)[En considérant un choc structurel budgétaire (G), les fonctions de réponses pour T et G sont cohérentes. Si on se concentre sur l'effet sur l'output, on voit que les dépenses gouvernementales augmentent ce dernier, mais la hausse n'est qu'éphémère. Cela fait du sens, car bien que les dépenses gouvernementales augmentent l'output, elles ne sont pas source de croissances à long terme.
+
+\[…\]
 
 (G, T, Y) : Ce schéma est plausible, Y reçoit l'effet contemporain de chocs fiscaux et budgétaires ce qui est cohérent. La relation contemporaine entre T et G est plus nébuleuse. Il semble plus logique que les dépenses gouvernementales soient affectées par un choc fiscal que l'alternative.
 
