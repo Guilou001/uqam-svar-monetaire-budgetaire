@@ -188,7 +188,7 @@ Comment lire cette figure : le même choc, sur les vingt-cinq années suivantes.
 
 #figure(image("../results/figures/reponses_monetaire_1983-2020.png", width: 100%), caption: [Réponses au choc monétaire, 1983-2020])
 
-Comment lire cette figure : la même période prolongée jusqu'en 2020. La production finit par passer sous zéro, à -0,30 %, mais au cinquantième mois, c'est-à-dire au bord du calcul. Ce point le plus bas n'est donc pas un creux, et le comparer aux onze mois de 1965-1982 n'aurait pas de sens.
+Comment lire cette figure : la même période prolongée jusqu'en 2020. La production passe sous zéro dès le dixième mois et y reste les quarante et un mois suivants. Son point le plus bas, -0,30 %, tombe au cinquantième, c'est-à-dire au bord du calcul. Ce n'est donc pas un creux, et le comparer aux onze mois de 1965-1982 n'aurait pas de sens.
 
 #figure(image("../results/figures/reponses_monetaire_complet.png", width: 100%), caption: [Réponses au choc monétaire, 1965-2020])
 
@@ -275,7 +275,7 @@ Comment lire cette figure : les trois courbes sont la réponse du produit intér
 
 #raw("uv sync --locked --all-extras\nuv run pytest             # 11 tests fermés, sans réseau\nuv run svr fetch          # seize séries de FRED, environ 0,2 Mo\nuv run svr bases          # les deux fenêtres, et les cases comblées\nuv run svr retards        # les critères d'information, comme VARselect\nuv run svr lab            # les quatre SVAR monétaires et les trois budgétaires\nuv run svr figures        # les six figures", block: true, lang: "bash")
 
-Durée mesurée sur un processeur Apple M5 Pro : *environ 4 secondes* pour #raw("svr lab"), dont près de trois passent dans les 200 tirages de Monte-Carlo qui donnent les intervalles. La seconde restante est le démarrage de l'interpréteur.
+Durée mesurée sur un processeur Apple M5 Pro, médiane de cinq exécutions : *environ 2 secondes* pour #raw("svr lab"). Le chargement des bibliothèques en prend près d'une, et les 200 tirages de Monte-Carlo qui donnent les intervalles à peu près autant.
 
 == 7. Limites, avec leur statut
 
