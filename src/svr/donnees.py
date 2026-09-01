@@ -105,9 +105,9 @@ def imputer(tableau: pd.DataFrame, composantes: int = 2) -> pd.DataFrame:
     centrées et réduites, deux composantes sont estimées, et les cases manquantes sont remplacées par
     leur projection, l'opération étant répétée jusqu'à convergence.
 
-    Ce n'est pas un détail de confort. Les réserves non empruntées sont devenues négatives de la fin
-    de 2008 à 2010, et leur logarithme n'existe pas sur ces mois-là : ce sont ces cases que le travail
-    de 2021 comblait.
+    Ce n'est pas un détail de confort. Les réserves non empruntées sont devenues négatives de janvier
+    à novembre 2008, et leur logarithme n'existe pas sur ces onze mois-là : ce sont ces cases que le
+    travail de 2021 comblait.
     """
     from statsmodels.multivariate.pca import PCA
 
@@ -118,14 +118,21 @@ def imputer(tableau: pd.DataFrame, composantes: int = 2) -> pd.DataFrame:
     return tableau.where(tableau.notna(), complet)
 
 
-def charger(racine: Path = RACINE) -> Donnees:
-    """Les deux tableaux, sur les fenêtres du travail de 2021."""
+def bloc_mensuel(racine: Path = RACINE) -> pd.DataFrame:
+    """Les huit variables mensuelles, en logarithme ou en niveau, avant que les trous soient comblés."""
     colonnes = {}
     for identifiant, (nom, forme) in MENSUELLES.items():
         serie = _lire(identifiant, racine).loc[DEBUT_MENSUEL:FIN_MENSUEL]
         colonnes[nom] = np.log(serie.where(serie > 0)) if forme == "log" else serie
-    mensuel = imputer(pd.DataFrame(colonnes)[ORDRE_MENSUEL])
+    return pd.DataFrame(colonnes)[ORDRE_MENSUEL]
 
+
+def bloc_trimestriel(racine: Path = RACINE) -> pd.DataFrame:
+    """Les trois variables trimestrielles, avant que les lignes incomplètes soient retirées.
+
+    Ce tableau se rend avant le `dropna` pour que le nombre de cases manquantes se compte, plutôt
+    que de se supposer nul : une case perdue en silence est une observation perdue en silence.
+    """
     brut = {nom: _lire(identifiant, racine).loc[DEBUT_TRIMESTRIEL:FIN_TRIMESTRIEL]
             for identifiant, nom in TRIMESTRIELLES.items()}
     table = pd.DataFrame(brut)
@@ -133,10 +140,13 @@ def charger(racine: Path = RACINE) -> Donnees:
     par_tete = 1e9 * 100.0 / (table["population"] * 1000.0)
     # Le produit reste en dollars courants : le code de 2021 divisait G et T par le déflateur et
     # laissait Y sans, et ce dépôt le reproduit tel quel. Le défaut est déclaré dans le README.
-    trimestriel = pd.DataFrame({
+    return pd.DataFrame({
         "G": np.log(table["depense"] / table["deflateur"] * par_tete),
         "T": np.log(recettes_nettes / table["deflateur"] * par_tete),
         "Y": np.log(table["pib"] * 1e9 / (table["population"] * 1000.0)),
-    }).dropna()
+    })
 
-    return Donnees(mensuel, trimestriel)
+
+def charger(racine: Path = RACINE) -> Donnees:
+    """Les deux tableaux, sur les fenêtres du travail de 2021."""
+    return Donnees(imputer(bloc_mensuel(racine)), bloc_trimestriel(racine).dropna())

@@ -31,18 +31,15 @@ def fetch() -> None:
 
 @app.command()
 def bases(out: Path = Path("results")) -> None:
-    """Les deux tableaux, leur fenêtre et le nombre de cases comblées."""
-    import numpy as np
+    """Les deux tableaux, leur fenêtre et le nombre de cases manquantes, l'un et l'autre comptés."""
     import pandas as pd
 
     from svr import donnees
 
     d = donnees.charger()
-    brut = {}
-    for identifiant, (nom, forme) in donnees.MENSUELLES.items():
-        serie = donnees._lire(identifiant, donnees.RACINE).loc[donnees.DEBUT_MENSUEL:donnees.FIN_MENSUEL]
-        brut[nom] = np.log(serie.where(serie > 0)) if forme == "log" else serie
-    manquantes = pd.DataFrame(brut).isna().sum()
+    manquantes = donnees.bloc_mensuel().isna().sum()
+    # le bloc trimestriel n'est pas comblé mais élagué : ce compte dit ce que le `dropna` a retiré
+    manquantes_trimestrielles = int(donnees.bloc_trimestriel().isna().sum().sum())
 
     table = pd.DataFrame([
         {"bloc": "mensuel", "variables": d.mensuel.shape[1], "observations": len(d.mensuel),
@@ -50,7 +47,7 @@ def bases(out: Path = Path("results")) -> None:
          "cases_comblees": int(manquantes.sum())},
         {"bloc": "trimestriel", "variables": d.trimestriel.shape[1], "observations": len(d.trimestriel),
          "premier": f"{d.trimestriel.index[0]:%Y-%m}", "dernier": f"{d.trimestriel.index[-1]:%Y-%m}",
-         "cases_comblees": 0},
+         "cases_comblees": manquantes_trimestrielles},
     ])
     (out / "tables").mkdir(parents=True, exist_ok=True)
     table.to_csv(out / "tables" / "dimensions.csv", index=False)

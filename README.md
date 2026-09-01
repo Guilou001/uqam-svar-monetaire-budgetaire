@@ -15,15 +15,17 @@ sur 1965-2020 : la production monte pendant cinq mois avant de tomber, jusqu'à 
 Les prix, eux, montent au lieu de baisser, l'énigme que le travail de 2021 signalait déjà. La coupure
 d'échantillon dit le reste : avant 1983 un choc de taux creuse la production de **-0,85 %** en onze
 mois, entre 1983 et 2007 il ne la fait **jamais passer sous son niveau de départ**. Côté budgétaire,
-l'ordre de récursivité décide du signe : la dépense publique élève le produit de **+0,11 %** quand
-elle est ordonnée en premier et de **0,00 %** par construction quand le produit l'est.
+l'ordre de récursivité fixe l'ampleur de la réponse immédiate, de **+0,11 %** à **0,00 %** par
+construction, et le signe de la réponse à vingt trimestres, de **+0,10 %** à **-0,22 %** pour un
+choc d'impôt.
 
 *English summary.* A recursive SVAR on eight US monthly series, 1965-2020, reproduces the Christiano,
 Eichenbaum and Evans (1999) pattern: industrial production rises for five months, then falls to
 -0,23 % at month 30, while consumer prices rise, the price puzzle the 2021 coursework already flagged.
 Splitting the sample sharpens the point: before 1983 a policy shock cuts production by 0,85 % within
 eleven months; from 1983 to 2007 production never drops below its starting level. In the fiscal block,
-the recursive ordering decides the sign of the impact response, from +0,11 % to exactly zero. Two
+the recursive ordering sets the size of the impact response, from +0,11 % to exactly zero, and the
+sign of the twenty-quarter response to a tax shock, from +0,10 % to -0,22 %. Two
 substitutions are declared: the Wu-Xia shadow rate is not downloadable by script, and Guay's fiscal
 database is not public, so government spending is rebuilt from the FRED aggregate that equals the sum
 of its seven components.
@@ -109,8 +111,10 @@ Le code R de 2021 lisait deux classeurs déposés à la main, et aucun des deux 
 | Mensuel | production industrielle, chômage, prix des matières premières, prix à la consommation, taux des fonds fédéraux, monnaie M1, réserves non empruntées, réserves totales | 1965-01 à 2020-06 | 666 |
 | Trimestriel | dépense publique et recettes nettes, réelles et par habitant ; produit intérieur brut nominal par habitant | 1960T1 à 2015T3 | 223 |
 
-Comment lire ce tableau, en deux constats. Le premier est que les deux fenêtres tombent exactement sur
-celles du code de 2021, qui les écrivait en positions de ligne, `X[217:666,]` et `dt.Q[53:275,]`. Le
+Comment lire ce tableau, en deux constats. Le premier est que les deux fenêtres tombent exactement
+sur celles du code de 2021. La mensuelle est posée à la construction des séries, par
+`ts(start = c(1965,1), end = c(2020,6))`, qui donne les 666 lignes du tableau `X`. La trimestrielle,
+elle, est découpée en positions de ligne, `dt.Q[53:275,]`. Le
 second est que les huit variables mensuelles sont celles de Christiano, Eichenbaum et Evans, rangées
 dans leur ordre de récursivité : les quatre lentes d'abord, le taux directeur au milieu, les trois
 variables financières ensuite.
@@ -129,7 +133,7 @@ par une série approchante.
 
 **Onze cases comblées, et pourquoi.** Le code de 2021 appelait `imputePCA` sans dire ce qu'il
 comblait. La reconstruction le montre : les onze valeurs manquantes sont toutes dans le logarithme des
-réserves non empruntées, devenues **négatives de la fin de 2008 à 2010**, une conséquence directe des
+réserves non empruntées, devenues **négatives de janvier à novembre 2008**, une conséquence directe des
 prêts d'urgence de la Réserve fédérale. Ce dépôt les comble par la même méthode, une analyse en
 composantes principales itérative à deux composantes.
 
@@ -177,13 +181,15 @@ verdict du tableau.
 Comment lire cette figure : mêmes cadres et mêmes conventions que la planche d'ensemble ci-dessous.
 Le cadre de la production, en haut à gauche, descend jusqu'à -0,85 % au onzième mois, et sa bande
 reste sous zéro d'un bout à l'autre du creux. Le cadre des prix à la consommation descend lui aussi,
-seul des trois échantillons à le faire : l'énigme des prix est absente ici.
+jusqu'à -0,56 % au trente-huitième mois : l'énigme des prix est absente ici.
 
 ![Réponses au choc monétaire, 1983-2007](results/figures/reponses_monetaire_1983-2007.png)
 
 Comment lire cette figure : le même choc, sur les vingt-cinq années suivantes. La production ne passe
 jamais sous son niveau de départ en cinquante mois, ce qui est le fait central du dépôt. Les prix à
-la consommation, eux, montent, donc l'énigme des prix apparaît là où l'effet réel disparaît.
+la consommation, eux, montent trois ans durant, donc l'énigme des prix apparaît là où l'effet réel
+disparaît. Ils repassent sous zéro au trente-sixième mois, mais de -0,03 % au plus bas, vingt fois
+moins que sur 1965-1982.
 
 ![Réponses au choc monétaire, 1983-2020](results/figures/reponses_monetaire_1983-2020.png)
 
@@ -196,9 +202,10 @@ n'est donc pas un creux, et le comparer aux onze mois de 1965-1982 n'aurait pas 
 Comment lire cette figure : un cadre par variable, les mois écoulés depuis le choc en abscisse. La
 courbe est la réponse à un choc de taux d'un écart type, la bande son intervalle à 90 %. Les grandeurs
 en logarithme sont converties en pourcentage, les taux restent en points. La production monte d'abord,
-puis descend, et sa bande cesse d'exclure zéro au trentième mois : l'effet est net dans sa forme et
-incertain dans son ampleur. Les prix à la consommation, en haut à droite, montent sans jamais
-redescendre, ce qu'aucune théorie du resserrement monétaire ne prévoit.
+puis descend, et sa bande exclut zéro du quatorzième au vingt-neuvième mois avant de le contenir de
+nouveau : l'effet est net dans sa forme et incertain dans son ampleur. Les prix à la consommation, en
+haut à droite, montent sans jamais redescendre, ce qu'aucune théorie du resserrement monétaire ne
+prévoit.
 
 ![Décomposition de la variance](results/figures/variance_monetaire.png)
 
@@ -218,17 +225,24 @@ variance et environ un dixième de celle des prix à la consommation.
 | Part des prix à la consommation, même case | 16,7 % | 0,7 % |
 | Part de la dépense expliquée par elle-même à six trimestres, ordre (G, T, Y) | 98 % | 97,6 % |
 | Part des recettes expliquée par le produit, six trimestres, même ordre | 42 % | 0,0 % |
+| Retards du bloc monétaire retenus par le critère d'Akaike | 3 | 10 ; Hannan-Quinn donne 3, Schwarz 2 |
 
-Comment lire ce tableau, en trois constats. Le premier est que les constats qualitatifs se retrouvent
-tous : la forme des réponses, l'énigme des prix, la domination de chaque variable par elle-même à
-court horizon. Le deuxième est que deux cases numériques tombent presque exactement, la part du
-chômage à 0,3 point près et la part de la dépense à 0,4 point près. Le troisième est que deux autres
-divergent franchement, et il faut le dire tel quel : la part des prix dans la variance de la
+Comment lire ce tableau, en quatre constats. Le premier est que les constats qualitatifs se
+retrouvent tous : la forme des réponses, l'énigme des prix, la domination de chaque variable par
+elle-même à court horizon. Le deuxième est que deux cases numériques tombent presque exactement, la
+part du chômage à 0,3 point près et la part de la dépense à 0,4 point près. Le troisième est que deux
+autres divergent franchement, et il faut le dire tel quel : la part des prix dans la variance de la
 production et la part du produit dans celle des recettes. La cause probable est la donnée elle-même,
 puisque ni le fichier de Ramey ni la base de Guay ne sont ceux d'ici, mais rien dans ce dépôt ne le
 démontre.
 
-### Le bloc budgétaire, où l'ordre décide du signe
+Le quatrième porte sur le nombre de retards, et il oblige à corriger la justification de 2021. Le
+travail attribuait ses trois retards au critère d'Akaike. Rejouée avec la spécification exacte du
+code R, `VARselect(X, lag.max = 10, type = "both")`, la sélection donne dix retards par ce critère,
+trois par celui de Hannan-Quinn et deux par celui de Schwarz. Ce dépôt garde les trois retards de
+2021, comme le code R les gardait, mais ce n'est pas l'Akaike qui les désigne.
+
+### Le bloc budgétaire, où l'ordre décide de l'ampleur immédiate, et du signe pour un choc d'impôt
 
 | Ordre de récursivité | Effet immédiat sur le produit | Effet à vingt trimestres | Choc d'impôt à vingt trimestres |
 |---|---:|---:|---:|
@@ -236,7 +250,7 @@ démontre.
 | Impôts, dépense, produit | +0,09 % | -0,08 % | +0,09 % |
 | Produit, dépense, impôts | 0,00 % | -0,17 % | -0,22 % |
 
-Comment lire ce tableau, en trois constats. Le premier est mécanique, et il sert de preuve que le
+Comment lire ce tableau, en quatre constats. Le premier est mécanique, et il sert de preuve que le
 code fait ce qu'il annonce. Dans le troisième ordre, le produit vient en premier, donc il ne peut
 pas réagir dans le trimestre à un choc de dépense, et la case vaut exactement zéro. Le deuxième est que
 les deux premiers ordres donnent presque le même chiffre, +0,11 % et +0,09 %, ce qui rassure sur la
@@ -244,13 +258,18 @@ partie du résultat qui ne dépend pas de l'hypothèse. Le troisième est que l'
 négatif dans les trois cas, ce que le travail de 2021 jugeait déjà peu conforme à Blanchard et
 Perotti. Le classement de plausibilité qu'il proposait reste le bon guide de lecture.
 
+Le quatrième est le seul endroit où l'ordre renverse un signe, et c'est la dernière colonne. Un choc
+d'impôt élève le produit de +0,10 % et de +0,09 % à vingt trimestres dans les deux premiers ordres,
+et l'abaisse de -0,22 % dans le troisième. À l'impact, en revanche, aucun signe ne change : l'ordre y
+décide de l'ampleur, de +0,11 % à zéro, et ce zéro est la restriction du premier constat.
+
 ![Réponse du produit à un choc de dépense](results/figures/reponses_budgetaire.png)
 
 Comment lire cette figure : les trois courbes sont la réponse du produit intérieur brut nominal par
 habitant à un choc de dépense publique d'un écart type, une courbe par ordre de récursivité. La courbe
 qui part de zéro est celle où le produit est ordonné en premier, par construction. Les trois ne se
 rejoignent pas sur les vingt trimestres tracés : l'écart entre la plus haute et la plus basse vaut
-0,112 point à l'impact et encore 0,099 point au vingtième. L'ordre choisi ne décide donc pas du seul
+0,112 point à l'impact et encore 0,098 point au vingtième. L'ordre choisi ne décide donc pas du seul
 trimestre du choc, il décale toute la trajectoire.
 
 ## 6. Reproduire
@@ -265,8 +284,9 @@ uv run svr lab            # les quatre SVAR monétaires et les trois budgétaire
 uv run svr figures        # les six figures
 ```
 
-Durée mesurée sur un processeur Apple M5 Pro : **16 secondes** pour `svr lab`, dont le plus gros
-passe dans les 200 tirages de Monte-Carlo qui donnent les intervalles.
+Durée mesurée sur un processeur Apple M5 Pro : **environ 4 secondes** pour `svr lab`, dont près de
+trois passent dans les 200 tirages de Monte-Carlo qui donnent les intervalles. La seconde restante
+est le démarrage de l'interpréteur.
 
 ## 7. Limites, avec leur statut
 

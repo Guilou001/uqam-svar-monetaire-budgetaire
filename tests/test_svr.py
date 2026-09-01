@@ -101,6 +101,9 @@ def test_le_titre_n_annonce_un_creux_que_s_il_existe():
     Une réponse qui ne repasse jamais sous son niveau de départ a pour minimum zéro, au mois zéro.
     Annoncer « creux à 0,00 % au mois 0 » serait alors le contraire de ce que la courbe montre, et
     c'est le titre que portait la figure de 1983-2007.
+
+    Le second piège est le minimum atteint au dernier mois tracé, celui de 1983-2020 : la courbe
+    descend encore quand le calcul s'arrête, donc ce point n'est pas un creux non plus.
     """
     montante = pd.DataFrame({"LIP": [0.0, 0.00075, 0.00116]})
     assert "ne descend jamais sous son niveau de départ" in titre_monetaire("1983-2007", montante)
@@ -110,3 +113,8 @@ def test_le_titre_n_annonce_un_creux_que_s_il_existe():
     # -0,0085 en logarithme fait -0,85 %, atteint au mois 1
     assert "creux à -0,85 % au mois 1" in titre_monetaire("complet", creusee)
     assert "échantillon 1965-2020" in titre_monetaire("complet", creusee)
+
+    au_bord = pd.DataFrame({"LIP": [0.0, -0.0012, -0.0030]})
+    assert "tombe au bord du calcul (mois 2)" in titre_monetaire("1983-2020", au_bord)
+    assert "-0,30 %" in titre_monetaire("1983-2020", au_bord)
+    assert "creux" not in titre_monetaire("1983-2020", au_bord)

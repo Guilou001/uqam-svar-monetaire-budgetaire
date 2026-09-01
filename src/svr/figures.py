@@ -20,6 +20,14 @@ LIBELLES = {
 }
 ECHELLE_POURCENT = {"LIP", "LPCOM", "LCPI", "LM1", "LNBR", "LTR", "G", "T", "Y"}
 
+# Les trois ordres de récursivité, tels qu'ils se lisent dans le tableau du README : la clé interne
+# du code ne paraît jamais sur une figure.
+LIBELLES_ORDRES = {
+    "depense_dabord": "Dépense, impôts, produit",
+    "impots_dabord": "Impôts, dépense, produit",
+    "produit_dabord": "Produit, dépense, impôts",
+}
+
 
 def use_style():
     import matplotlib as mpl
@@ -80,7 +88,7 @@ def fig_budgetaire(reponses: dict[str, pd.DataFrame], dest: Path) -> Path:
     for k, (nom, table) in enumerate(sorted(reponses.items())):
         serie = 100 * table["Y"].to_numpy()
         ax.plot(np.arange(len(serie)), serie, color=OKABE_ITO[k % len(OKABE_ITO)],
-                marker="o", ms=3, label=nom.replace("_", " "))
+                marker="o", ms=3, label=LIBELLES_ORDRES.get(nom, nom))
     ax.axhline(0.0, color="black", lw=0.8)
     # les trimestres se comptent un par un : l'axe ne doit pas afficher de demi-trimestre
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
@@ -88,8 +96,10 @@ def fig_budgetaire(reponses: dict[str, pd.DataFrame], dest: Path) -> Path:
     ax.set_ylabel("Réponse du produit intérieur brut nominal\npar habitant (%)", fontsize=9.5)
     ax.yaxis.set_major_formatter(fr)
     ax.legend(fontsize=9)
-    ecarts = {nom: 100 * float(t["Y"].max()) for nom, t in reponses.items()}
-    etendue = max(ecarts.values()) - min(ecarts.values())
+    # l'écart annoncé est celui qui sépare les courbes trimestre par trimestre, et non l'étendue de
+    # leurs sommets : les deux coïncident quand les trois culminent au même trimestre, pas sinon
+    courbes = pd.DataFrame({nom: 100 * t["Y"] for nom, t in reponses.items()})
+    etendue = float((courbes.max(axis=1) - courbes.min(axis=1)).max())
     ax.set_title("Réponse du produit à un choc de dépense publique : les trois ordres de récursivité "
                  f"s'écartent de {_fr(etendue)} point au maximum", fontsize=10.5)
     fig.savefig(dest)
@@ -122,15 +132,22 @@ def fig_variance(decomposition: pd.DataFrame, titre: str, dest: Path) -> Path:
 def titre_monetaire(nom: str, table: pd.DataFrame) -> str:
     """Le titre d'une figure de réponses, déduit de la table que cette figure dessine.
 
-    Le creux ne s'annonce que s'il existe. Sur 1983-2007 la production ne repasse jamais sous son
-    niveau de départ, et le minimum de la colonne y vaut exactement zéro, au mois zéro : écrire
-    « creux à 0,00 % au mois 0 » dirait alors le contraire de ce que la courbe montre.
+    Le creux ne s'annonce que s'il existe, et deux cas l'empêchent. Sur 1983-2007 la production ne
+    repasse jamais sous son niveau de départ, et le minimum de la colonne y vaut exactement zéro, au
+    mois zéro : écrire « creux à 0,00 % au mois 0 » dirait alors le contraire de ce que la courbe
+    montre. Sur 1983-2020 la production descend encore au dernier mois tracé, donc son point le plus
+    bas est celui où le calcul s'arrête, et non un creux que la courbe aurait quitté.
     """
-    bas = 100 * float(table["LIP"].min())
+    serie = table["LIP"]
+    bas = 100 * float(serie.min())
+    mois = int(serie.idxmin())
     if bas >= 0:
         fin = "la production ne descend jamais sous son niveau de départ"
+    elif mois == int(serie.index[-1]):
+        fin = (f"le point le plus bas de la production, {_fr(bas)} %, "
+               f"tombe au bord du calcul (mois {mois})")
     else:
-        fin = f"la production touche son creux à {_fr(bas)} % au mois {int(table['LIP'].idxmin())}"
+        fin = f"la production touche son creux à {_fr(bas)} % au mois {mois}"
     return (f"Choc de politique monétaire, échantillon {nom.replace('complet', '1965-2020')} : "
             f"{fin}\n"
             "La bande est l'intervalle à 90 % par tirages de Monte-Carlo")
@@ -160,8 +177,10 @@ def toutes(out: Path = Path("results")) -> list[Path]:
         part = 100 * float(decomposition.loc["LIP", "FFR"])
         ecrites.append(fig_variance(
             decomposition,
-            "Décomposition de la variance à dix mois, échantillon 1965-2020 : le choc de taux "
-            f"explique {_fr(part)} % de la variance de la production", figs / "variance_monetaire.png"))
+            # deux lignes : sur une seule, ce titre dépasse la largeur de la figure et se coupe
+            "Décomposition de la variance à dix mois, échantillon 1965-2020\n"
+            f"Le choc de taux explique {_fr(part)} % de la variance de la production",
+            figs / "variance_monetaire.png"))
 
     reponses = {}
     for nom in ("depense_dabord", "impots_dabord", "produit_dabord"):
